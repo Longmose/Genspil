@@ -32,7 +32,7 @@ namespace Genspil
 
                 int numberOfPlayersMin, numberOfPlayersMax, amount;
                 double price;
-                string condition;
+                Stand condition;
 
                 // Exception handling for ugyldige input
                 try
@@ -43,8 +43,8 @@ namespace Genspil
                     Console.Write("Antal spillere (max): ");
                     numberOfPlayersMax = int.Parse(Console.ReadLine());
 
-                    Console.Write("Stand: ");
-                    condition = Console.ReadLine();
+                    Console.WriteLine("Spillets tilstand:\n1: Perfekt\n2: God\n3: Middel\n4: Slidt\n5: Dårlig\n6: Elendig ");
+                    condition = (Stand)int.Parse(Console.ReadLine());
 
                     Console.Write("Antal: ");
                     amount = int.Parse(Console.ReadLine());

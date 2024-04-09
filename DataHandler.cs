@@ -77,7 +77,8 @@ namespace Genspil
                             string playersRange = ExtractValue(reader.ReadLine(), "Antal Spillere:").Trim();
                             int numberOfPlayersMin = GetMinPlayers(playersRange);
                             int numberOfPlayersMax = GetMaxPlayers(playersRange);
-                            string condition = ExtractValue(reader.ReadLine(), "Stand:").Trim();
+                            string conditionStr = ExtractValue(reader.ReadLine(), "Stand:").Trim();
+                            Stand condition = (Stand)Enum.Parse(typeof(Stand), conditionStr);
                             int amount = int.Parse(ExtractValue(reader.ReadLine(), "Antal:"));
                             double price = double.Parse(ExtractValue(reader.ReadLine(), "Pris:").TrimEnd('k', 'r'));
 
@@ -85,12 +86,11 @@ namespace Genspil
                             games.Add(game);
 
                             // Læs den tomme linje, der adskiller hvert spil
-                            reader.ReadLine(); //Den her kunne meget vel være problemet i forbindelse med dobbelt-sorterings-fejlen
+                            reader.ReadLine(); 
                         }
                         catch (FormatException ex)
                         {
                             Console.WriteLine($"Fejl ved behandling af linjen: {ex.Message}");
-                            // Du kan vælge at springe over den fejlbehæftede linje eller afslutte læsningen af filen, afhængigt af dine behov
                         }
                     }
                 }

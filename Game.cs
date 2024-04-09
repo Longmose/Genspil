@@ -14,7 +14,7 @@ namespace Genspil
         private string category;
         private int numberOfPlayersMin;
         private int numberOfPlayersMax;
-        private string condition;
+        private Stand condition;
         private int amount;
         private double price;
 
@@ -24,12 +24,12 @@ namespace Genspil
         public string Category { get { return category; } set { category = value; } }
         public int NumberOfPlayersMin { get {  return numberOfPlayersMin; } set {  numberOfPlayersMin = value; } }
         public int NumberOfPlayersMax { get {  return numberOfPlayersMax; } set { numberOfPlayersMax = value; } }
-        public string Condition { get { return condition; } set { condition = value; } }
+        public Stand Condition { get { return condition; } set { condition = value; } }
         public int Amount { get { return amount; } set { amount = value; } }
         public double Price { get { return price; } set { price = value; } }
 
 
-        public Game( string title, string version, string category, int numberOfPlayersMin, int numberOfPlayersMax, string condition, int amount, double price )
+        public Game( string title, string version, string category, int numberOfPlayersMin, int numberOfPlayersMax, Stand condition, int amount, double price )
         {
             this.title = title;
             this.version = version;

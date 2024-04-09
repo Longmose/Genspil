@@ -2,6 +2,18 @@
 
 namespace Genspil
 {
+    public enum Stand
+    {
+        Perfekt = 1,
+        God,
+        Middel,
+        Slidt,
+        Dårlig,
+        Elendig
+    }
+        
+
+
     internal class Program
     {
         static void Main(string[] args)
@@ -50,6 +62,7 @@ namespace Genspil
                             gameManagement.ViewGames();
                             break;
 
+                        // Stop og luk programmet
                         case 0:
                             Console.Clear();
                             Console.WriteLine("Lukker Programmet. Tak for nu! :)");
