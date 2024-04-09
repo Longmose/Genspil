@@ -85,34 +85,98 @@ namespace Genspil
         // Metode til at fjerne spil
         public void RemoveGames()
         {
+            // Loop for at tillade gentagne sletninger, indtil brugeren beslutter at stoppe
             bool keepDeleting = true;
-            while (keepDeleting == true)
+            while (keepDeleting)
             {
                 Console.Clear();
 
+                // Opret en instans af DataHandler for at arbejde med spildata
                 DataHandler dataHandler = new DataHandler("spildata.txt");
+                // Viser en liste over alle spil
                 dataHandler.ReadAndPrintGames();
 
-                // Læs den titel på spillet, som brugeren ønsker at fjerne
+                // Bed brugeren om at indtaste titlen på det spil, de ønsker at fjerne eller 'q' for at afslutte
                 Console.WriteLine("Indtast titlen på spillet, du ønsker at slette (Tast 'q' for at stoppe):");
                 string gameTitleToRemove = Console.ReadLine();
 
-                // Bryd ud af while-loopet hvis 'q' tastes
+                // Håndterer afslutningsbetingelse
                 if (gameTitleToRemove.ToLower() == "q")
                 {
                     keepDeleting = false;
+                    continue;
+                }
+
+                // Henter listen over spil og finder det specifikke spil baseret på titlen
+                var games = dataHandler.ReadGames();
+                var gameToRemove = games.FirstOrDefault(g => g.Title.Equals(gameTitleToRemove, StringComparison.OrdinalIgnoreCase));
+
+                // Tjekker om spillet findes i listen
+                if (gameToRemove != null)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Information om valgte spil:");
+                    // Viser detaljeret information om det valgte spil
+                    Console.WriteLine(gameToRemove.GetInfo());
+                    Console.WriteLine("\nVil du fjerne spillet helt (tast 'f') eller reducere antallet (tast 'r')?");
+                    char choice = Console.ReadKey().KeyChar;
+
+                    // Behandler fjernelse af spil helt
+                    if (choice == 'f')
+                    {
+                        games.Remove(gameToRemove);
+                        dataHandler.OverwriteGames(games);
+                        Console.WriteLine($"\nSpillet {gameTitleToRemove} er fjernet helt.");
+                    }
+                    // Behandler reduktion af antal spil
+                    else if (choice == 'r')
+                    {
+                        Console.WriteLine("\nHvor mange enheder vil du fjerne?");
+                        if (int.TryParse(Console.ReadLine(), out int quantityToRemove) && quantityToRemove > 0)
+                        {
+                            // Reducerer antallet af spil eller fjerner spillet helt, hvis det nye antal er 0 eller mindre
+                            if (quantityToRemove >= gameToRemove.Amount)
+                            {
+                                games.Remove(gameToRemove);
+                                Console.WriteLine($"Alle enheder af {gameTitleToRemove} er fjernet.");
+                            }
+                            else
+                            {
+                                gameToRemove.Amount -= quantityToRemove;
+                                if (gameToRemove.Amount <= 0)
+                                {
+                                    games.Remove(gameToRemove);
+                                    Console.WriteLine($"Spillet {gameTitleToRemove} er fjernet helt, da antallet blev reduceret til 0 eller derunder.");
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"{quantityToRemove} enheder af {gameTitleToRemove} er fjernet. Resterende antal: {gameToRemove.Amount}");
+                                }
+                            }
+                            dataHandler.OverwriteGames(games);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Ugyldigt antal indtastet.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nUgyldigt valg.");
+                    }
                 }
                 else
                 {
-                    // Implementering af RemoveGame funktionen
-                    dataHandler.RemoveGame(gameTitleToRemove);
-                    Console.WriteLine("\nTryk på en vilkårlig tast for at fortsætte");
-                    Console.ReadKey();
+                    // Informerer brugeren, hvis det indtastede spil ikke findes
+                    Console.WriteLine($"Spillet med titlen \"{gameTitleToRemove}\" blev ikke fundet.");
                 }
 
-                
+                // Giver brugeren en chance for at se resultatet og fortsætter eller afslutter loopen
+                Console.WriteLine("\nTryk på en vilkårlig tast for at fortsætte");
+                Console.ReadKey();
             }
         }
+
 
         // Metode til at redigere spil
         public void EditGames()
