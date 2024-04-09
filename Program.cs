@@ -18,10 +18,11 @@ namespace Genspil
     {
         static void Main(string[] args)
         {
+            // Opretter en instans af GameManagement til at håndtere spiloperationer
             GameManagement gameManagement = new GameManagement();
             bool programRunning = true;
 
-            // Løkke til at kunne vælge nye handlinger når man er færdig med andre
+            // Løkke til at håndtere brugrinput og navigere programmet
             while (programRunning == true)
             {
                 // Brugeren vælger hvad de vil i programmet
@@ -53,7 +54,7 @@ namespace Genspil
                         // Rediger Spil
                         case 3:
                             Console.Clear();
-                            Console.WriteLine("test 3");
+                            gameManagement.EditGames();
                             break;
 
                         // Se og Sorter Spil

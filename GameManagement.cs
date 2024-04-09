@@ -204,8 +204,145 @@ namespace Genspil
         // Metode til at redigere spil
         public void EditGames()
         {
+            DataHandler dataHandler = new DataHandler("spildata.txt");
+            var games = dataHandler.ReadGames(); // Indlæser alle spil fra datafilen
 
+            // Viser en liste over alle spil
+            dataHandler.ReadAndPrintGames();
+
+            // Bed brugeren om at indtaste titlen på det spil, de ønsker at redigere
+            Console.WriteLine("Indtast titlen på det spil, du ønsker at redigere:");
+            string titleToEdit = Console.ReadLine();
+
+            // Find alle spil, der matcher den indtastede titel
+            var matchingGames = games.Where(g => g.Title.Equals(titleToEdit, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            Game gameToEdit = null;
+
+            // Håndterer scenarier, hvor der er flere spil med samme titel
+            if (matchingGames.Count > 1)
+            {
+                Console.Clear();
+                Console.WriteLine("Flere spil fundet med denne titel. Vælg et spil:");
+                for (int i = 0; i < matchingGames.Count; i++)
+                {
+                    Console.WriteLine($"\n{i + 1}: {matchingGames[i].GetInfo()}");
+                }
+                Console.WriteLine("\nIndtast nummeret på det spil, du vil redigere:");
+                if (int.TryParse(Console.ReadLine(), out int gameIndex) && gameIndex >= 1 && gameIndex <= matchingGames.Count)
+                {
+                    gameToEdit = matchingGames[gameIndex - 1];
+                }
+            }
+            else if (matchingGames.Count == 1)
+            {
+                // Hvis der kun findes et spil med den indtastede titel
+                gameToEdit = matchingGames.First();
+            }
+
+            // Hvis et spil er valgt, tillad redigering af dettes detaljer
+            if (gameToEdit != null)
+            {
+                EditGameDetails(gameToEdit);
+                dataHandler.OverwriteGames(games); // Gem de opdaterede spil til datafilen
+            }
+            else
+            {
+                Console.WriteLine("Spil ikke fundet eller ugyldigt valg.");
+            }
         }
+
+        // Hjælpemetode til at redigere detaljer for et specifikt spil
+        private void EditGameDetails(Game game)
+        {
+            Console.Clear();
+            Console.WriteLine("Redigerer spil:");
+            Console.WriteLine(game.GetInfo());
+
+            // Tillad brugeren at indtaste ny titel, men kun opdater hvis input ikke er tomt
+            Console.Write("\nNy titel (lad være tom for at beholde nuværende): ");
+            var newTitle = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(newTitle)) game.Title = newTitle;
+
+            // Tillad brugeren at indtaste ny version, men kun opdater hvis input ikke er tomt
+            Console.Write("Ny Version (lad være tom for at beholde nuværende): ");
+            var newVersion = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(newVersion)) game.Version = newVersion;
+
+            // Tillad brugeren at indtaste ny kategori, men kun opdater hvis input ikke er tomt
+            Console.Write("Ny Kategori (lad være tom for at beholde nuværende): ");
+            var newCategory = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(newCategory)) game.Category = newCategory;
+
+            string userInput; // Variabel til at holde brugerinput
+
+            // Rediger minimum antal spillere
+            Console.Write("Nyt minimum antal spillere (lad være tom for at beholde nuværende): ");
+            userInput = Console.ReadLine();
+            if (int.TryParse(userInput, out int newMinPlayers) && newMinPlayers > 0)
+            {
+                game.NumberOfPlayersMin = newMinPlayers;
+            }
+            else if (!string.IsNullOrWhiteSpace(userInput))
+            {
+                Console.WriteLine("Ugyldigt input. Beholder nuværende værdi.");
+            }
+
+            // Rediger maksimum antal spillere
+            Console.Write("Nyt maksimum antal spillere (lad være tom for at beholde nuværende): ");
+            userInput = Console.ReadLine();
+            if (int.TryParse(userInput, out int newMaxPlayers) && newMaxPlayers > 0)
+            {
+                game.NumberOfPlayersMax = newMaxPlayers;
+            }
+            else if (!string.IsNullOrWhiteSpace(userInput))
+            {
+                Console.WriteLine("Ugyldigt input. Beholder nuværende værdi.");
+            }
+
+            // Rediger stand
+            Console.WriteLine("Ny stand:\n1: Perfekt\n2: God\n3: Middel\n4: Slidt\n5: Dårlig\n6: Elendig ");
+            userInput = Console.ReadLine();
+            if (int.TryParse(userInput, out int newCondition) && Enum.IsDefined(typeof(Stand), newCondition))
+            {
+                game.Condition = (Stand)newCondition;
+            }
+            else if (!string.IsNullOrWhiteSpace(userInput))
+            {
+                Console.WriteLine("Ugyldigt input. Beholder nuværende stand.");
+            }
+
+            // Rediger antal
+            Console.Write("Nyt antal (lad være tom for at beholde nuværende): ");
+            userInput = Console.ReadLine();
+            if (int.TryParse(userInput, out int newAmount) && newAmount >= 0)
+            {
+                game.Amount = newAmount;
+            }
+            else if (!string.IsNullOrWhiteSpace(userInput))
+            {
+                Console.WriteLine("Ugyldigt input. Beholder nuværende antal.");
+            }
+
+            // Rediger pris
+            Console.Write("Ny pris (lad være tom for at beholde nuværende): ");
+            userInput = Console.ReadLine();
+            if (double.TryParse(userInput, out double newPrice) && newPrice >= 0)
+            {
+                game.Price = newPrice;
+            }
+            else if (!string.IsNullOrWhiteSpace(userInput))
+            {
+                Console.WriteLine("Ugyldigt input. Beholder nuværende pris.");
+            }
+
+            Console.Clear();
+            Console.WriteLine("Spil opdateret:");
+            Console.WriteLine(game.GetInfo());
+        }
+
+
+
 
         // Metode til at vise og sortere lagerlisten
         public void ViewGames()

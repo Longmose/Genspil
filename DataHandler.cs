@@ -171,45 +171,6 @@ namespace Genspil
                 Console.WriteLine($"Spillet med titlen \"{gameTitleToRemove}\" blev ikke fundet i filen.");
             }
         }
-
-
-
-        //public void RemoveGame(string gameTitleToRemove)
-        //{
-        //    List<Game> games = ReadGames();
-        //    Game gameToRemove = null;
-
-        //    // Fjern eventuelle ekstra mellemrum og tabulatorer fra den indtastede titel
-        //    gameTitleToRemove = gameTitleToRemove.Trim();
-
-        //    foreach (var game in games)
-        //    {
-        //        // Fjern også tabulatorer fra titlen på spillet i filen, før du sammenligner
-        //        string gameTitleFromFile = game.Title.Trim();
-
-        //        // Sammenlign titlerne uden hensyn til store/små bogstaver og whitespace
-        //        if (gameTitleFromFile.Equals(gameTitleToRemove, StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            gameToRemove = game;
-        //            break;
-        //        }
-        //    }
-
-        //    if (gameToRemove != null)
-        //    {
-        //        games.Remove(gameToRemove);
-
-        //        // Gem den opdaterede liste af spil i filen ved at overskrive den
-        //        OverwriteGames(games);
-
-        //        Console.WriteLine($"Spillet med titlen \"{gameTitleToRemove}\" blev fjernet fra filen.");
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine($"Spillet med titlen \"{gameTitleToRemove}\" blev ikke fundet i filen.");
-        //    }
-        //}
-
     }
 }
 
