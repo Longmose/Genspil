@@ -204,51 +204,61 @@ namespace Genspil
         // Metode til at redigere spil
         public void EditGames()
         {
-            DataHandler dataHandler = new DataHandler("spildata.txt");
-            var games = dataHandler.ReadGames(); // Indlæser alle spil fra datafilen
-
-            // Viser en liste over alle spil
-            dataHandler.ReadAndPrintGames();
-
-            // Bed brugeren om at indtaste titlen på det spil, de ønsker at redigere
-            Console.WriteLine("Indtast titlen på det spil, du ønsker at redigere:");
-            string titleToEdit = Console.ReadLine();
-
-            // Find alle spil, der matcher den indtastede titel
-            var matchingGames = games.Where(g => g.Title.Equals(titleToEdit, StringComparison.OrdinalIgnoreCase)).ToList();
-
-            Game gameToEdit = null;
-
-            // Håndterer scenarier, hvor der er flere spil med samme titel
-            if (matchingGames.Count > 1)
+            bool keepEditing = true;
+            while (keepEditing)
             {
-                Console.Clear();
-                Console.WriteLine("Flere spil fundet med denne titel. Vælg et spil:");
-                for (int i = 0; i < matchingGames.Count; i++)
+                DataHandler dataHandler = new DataHandler("spildata.txt");
+                var games = dataHandler.ReadGames(); // Indlæser alle spil fra datafilen
+
+                // Viser en liste over alle spil
+                dataHandler.ReadAndPrintGames();
+
+                // Bed brugeren om at indtaste titlen på det spil, de ønsker at redigere
+                Console.WriteLine("Indtast titlen på det spil, du ønsker at redigere (Tast 'q' for at stoppe):");
+                string titleToEdit = Console.ReadLine();
+
+                if (titleToEdit.ToLower() == "q")
                 {
-                    Console.WriteLine($"\n{i + 1}: {matchingGames[i].GetInfo()}");
+                    keepEditing = false;
+                    continue;
                 }
-                Console.WriteLine("\nIndtast nummeret på det spil, du vil redigere:");
-                if (int.TryParse(Console.ReadLine(), out int gameIndex) && gameIndex >= 1 && gameIndex <= matchingGames.Count)
-                {
-                    gameToEdit = matchingGames[gameIndex - 1];
-                }
-            }
-            else if (matchingGames.Count == 1)
-            {
-                // Hvis der kun findes et spil med den indtastede titel
-                gameToEdit = matchingGames.First();
-            }
 
-            // Hvis et spil er valgt, tillad redigering af dettes detaljer
-            if (gameToEdit != null)
-            {
-                EditGameDetails(gameToEdit);
-                dataHandler.OverwriteGames(games); // Gem de opdaterede spil til datafilen
-            }
-            else
-            {
-                Console.WriteLine("Spil ikke fundet eller ugyldigt valg.");
+                // Find alle spil, der matcher den indtastede titel
+                var matchingGames = games.Where(g => g.Title.Equals(titleToEdit, StringComparison.OrdinalIgnoreCase)).ToList();
+
+                Game gameToEdit = null;
+
+                // Håndterer scenarier, hvor der er flere spil med samme titel
+                if (matchingGames.Count > 1)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Flere spil fundet med denne titel. Vælg et spil:");
+                    for (int i = 0; i < matchingGames.Count; i++)
+                    {
+                        Console.WriteLine($"\n{i + 1}: {matchingGames[i].GetInfo()}");
+                    }
+                    Console.WriteLine("\nIndtast nummeret på det spil, du vil redigere:");
+                    if (int.TryParse(Console.ReadLine(), out int gameIndex) && gameIndex >= 1 && gameIndex <= matchingGames.Count)
+                    {
+                        gameToEdit = matchingGames[gameIndex - 1];
+                    }
+                }
+                else if (matchingGames.Count == 1)
+                {
+                    // Hvis der kun findes et spil med den indtastede titel
+                    gameToEdit = matchingGames.First();
+                }
+
+                // Hvis et spil er valgt, tillad redigering af dettes detaljer
+                if (gameToEdit != null)
+                {
+                    EditGameDetails(gameToEdit);
+                    dataHandler.OverwriteGames(games); // Gem de opdaterede spil til datafilen
+                }
+                else
+                {
+                    Console.WriteLine("Spil ikke fundet eller ugyldigt valg.");
+                }
             }
         }
 
