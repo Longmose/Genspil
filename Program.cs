@@ -87,10 +87,6 @@ namespace Genspil
                     Console.WriteLine("Ugyldigt input, indtast venligst kun tal");
                 }
             }
-
-            
-
-
             Console.ReadLine();
         }
 

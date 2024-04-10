@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Quic;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -54,6 +55,7 @@ namespace Genspil
                 }
                 catch (FormatException)
                 {
+                    Console.Clear();
                     Console.WriteLine("Ugyldigt input. Indtast venligst kun tal for antal spillere, antal og pris.");
                     continue; // Start loopet forfra
                 }
@@ -157,6 +159,7 @@ namespace Genspil
             // Spørger brugeren, om de vil fjerne spillet helt eller reducere antallet
             Console.WriteLine("\nVil du fjerne spillet helt (tast 'f') eller reducere antallet (tast 'r')?");
             char choice = Console.ReadKey().KeyChar;
+            Console.Clear();
 
             if (choice == 'f')
             {
@@ -347,65 +350,98 @@ namespace Genspil
             }
 
             Console.Clear();
-            Console.WriteLine("Spil opdateret:");
+            Console.WriteLine("Spil opdateret:\n");
             Console.WriteLine(game.GetInfo());
         }
+        
 
 
 
-
-        // Metode til at vise og sortere lagerlisten
+        // Metode til at vise, søge i, og sortere lagerlisten
         public void ViewGames()
         {
             DataHandler datahandler = new DataHandler("spildata.txt");
             var games = datahandler.ReadGames();
 
-            Console.WriteLine("Vælg sortering:");
-            Console.WriteLine("1. Titel");
-            Console.WriteLine("2. Version");
-            Console.WriteLine("3. Kategori");
-            Console.WriteLine("4. Antal spillere (Min)");
-            Console.WriteLine("5. Antal spillere (Max)");
-            Console.WriteLine("6. Stand");
-            Console.WriteLine("7. Antal");
-            Console.WriteLine("8. Pris");
-
-            int choice = int.Parse(Console.ReadLine()); // Husk at tilføje fejlhåndtering her
-
-            switch (choice)
+            while (true)
             {
-                case 1:
-                    games = games.OrderBy(g => g.Title).ToList();
-                    break;
-                case 2:
-                    games = games.OrderBy(g => g.Version).ToList();
-                    break;
-                case 3:
-                    games = games.OrderBy(g => g.Category).ToList();
-                    break;
-                case 4:
-                    games = games.OrderBy(g => g.NumberOfPlayersMin).ToList();
-                    break;
-                case 5:
-                    games = games.OrderBy(g => g.NumberOfPlayersMax).ToList();
-                    break;
-                case 6:
-                    games = games.OrderBy(g => g.Condition).ToList();
-                    break;
-                case 7:
-                    games = games.OrderBy(g => g.Amount).ToList();
-                    break;
-                case 8:
-                    games = games.OrderBy(g => g.Price).ToList();
-                    break;
-            }
+                // Bed om et søgeterm
+                Console.Clear();
+                Console.WriteLine("Indtast søgeterm (lad være tom for hele listen eller 'q' for at afslutte søgning):");
+                string searchTerm = Console.ReadLine()?.ToLower();
 
-            Console.Clear();
+                if (searchTerm == "q")
+                {
+                    break;
+                }
 
-            foreach (var game in games)
-            {
-                Console.WriteLine(game.GetInfo());
-                Console.WriteLine();
+                // Filtrer listen baseret på søgeterm. Hvis søgeterm er tomt, bruges hele listen.
+                var filteredGames = games.Where(game => string.IsNullOrWhiteSpace(searchTerm) ||
+                                                        game.Title.ToLower().Contains(searchTerm) ||
+                                                        game.Category.ToLower().Contains(searchTerm) ||
+                                                        game.Version.ToLower().Contains(searchTerm)).ToList();
+
+                // Vælg sortering
+                if (filteredGames.Any())
+                {
+                    Console.WriteLine("Vælg sortering:");
+                    Console.WriteLine("1. Titel");
+                    Console.WriteLine("2. Version");
+                    Console.WriteLine("3. Kategori");
+                    Console.WriteLine("4. Antal spillere (Min)");
+                    Console.WriteLine("5. Antal spillere (Max)");
+                    Console.WriteLine("6. Stand");
+                    Console.WriteLine("7. Antal");
+                    Console.WriteLine("8. Pris");
+
+                    // Fejlhåndtering af sortering
+                    if (!int.TryParse(Console.ReadLine(), out int sortChoice))
+                    {
+                        sortChoice = 1; // Standard sortering efter titel, hvis intet eller ugyldigt input er givet
+                    }
+
+                    // Anvend valgt sortering
+                    switch (sortChoice)
+                    {
+                        case 1:
+                            filteredGames = filteredGames.OrderBy(g => g.Title).ToList();
+                            break;
+                        case 2:
+                            filteredGames = filteredGames.OrderBy(g => g.Version).ToList();
+                            break;
+                        case 3:
+                            filteredGames = filteredGames.OrderBy(g => g.Category).ToList();
+                            break;
+                        case 4:
+                            filteredGames = filteredGames.OrderBy(g => g.NumberOfPlayersMin).ToList();
+                            break;
+                        case 5:
+                            filteredGames = filteredGames.OrderBy(g => g.NumberOfPlayersMax).ToList();
+                            break;
+                        case 6:
+                            filteredGames = filteredGames.OrderBy(g => g.Condition).ToList();
+                            break;
+                        case 7:
+                            filteredGames = filteredGames.OrderBy(g => g.Amount).ToList();
+                            break;
+                        case 8:
+                            filteredGames = filteredGames.OrderBy(g => g.Price).ToList();
+                            break;
+                    }
+                }
+
+                // Vis filtrerede og sorterede spil
+                Console.Clear();
+                int gameCount = 0;
+                foreach (var game in filteredGames)
+                {
+                    Console.WriteLine(game.GetInfo());
+                    Console.WriteLine();
+                    gameCount++;
+                }
+                Console.WriteLine($"Søgetermen \"{searchTerm}\" gav {gameCount} resultater");
+                Console.WriteLine("Tryk 'Enter' for at fortsætte");
+                Console.ReadLine();
             }
         }
     }
