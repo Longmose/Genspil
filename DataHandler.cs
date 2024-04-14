@@ -14,7 +14,7 @@ namespace Genspil
         public DataHandler(string filePath)
         {
             this.filePath = filePath;
-        } //"G:\Visual Studio Projects\Genspil\bin\Debug\net8.0\spildata.txt" for Eske
+        }
 
         public void SaveGames(List<Game> games, bool append = true)
         {
