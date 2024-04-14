@@ -103,7 +103,7 @@ namespace Genspil
                 if (gameTitleToRemove.ToLower() == "q")
                 {
                     keepDeleting = false;
-                    continue;
+                    break;
                 }
 
                 var games = dataHandler.ReadGames();
@@ -172,13 +172,6 @@ namespace Genspil
                 Console.WriteLine("\nHvor mange enheder vil du fjerne?");
                 if (int.TryParse(Console.ReadLine(), out int quantityToRemove) && quantityToRemove > 0)
                 {
-                    if (quantityToRemove >= gameToRemove.Amount)
-                    {
-                        allGames.Remove(gameToRemove);
-                        Console.WriteLine($"Alle enheder af {gameToRemove.Title} er fjernet.");
-                    }
-                    else
-                    {
                         gameToRemove.Amount -= quantityToRemove;
                         if (gameToRemove.Amount <= 0)
                         {
@@ -190,7 +183,6 @@ namespace Genspil
                             Console.WriteLine($"{quantityToRemove} enheder af {gameToRemove.Title} er fjernet. Resterende antal: {gameToRemove.Amount}");
                         }
                         dataHandler.OverwriteGames(allGames);
-                    }
                 }
                 else
                 {
@@ -376,7 +368,7 @@ namespace Genspil
                 }
 
                 // Filtrer listen baseret på søgeterm. Hvis søgeterm er tomt, bruges hele listen.
-                var filteredGames = games.Where(game => string.IsNullOrWhiteSpace(searchTerm) ||
+                var filteredGames = games.Where(game => string.IsNullOrWhiteSpace(searchTerm) || // Tjekker om brugeren har indtastet noget
                                                         game.Title.ToLower().Contains(searchTerm) ||
                                                         game.Category.ToLower().Contains(searchTerm) ||
                                                         game.Version.ToLower().Contains(searchTerm)).ToList();

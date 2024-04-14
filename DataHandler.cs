@@ -146,8 +146,8 @@ namespace Genspil
                 Console.WriteLine(); // Skriv en tom linje mellem hvert spil
             }
         }
-        // Slet spil metode
 
+        // Slet spil metode
         public void RemoveGame(string gameTitleToRemove, int quantity = 0)
         {
             List<Game> games = ReadGames();
